@@ -1,0 +1,45 @@
+{
+    "author": "Safe Online World Ltd.",
+    "apps": {
+        "win": [
+            {
+                "appName": "SOW ERP",
+                "procName": "node",
+                "cwd": "D:\\project\\sow-erp",
+                "argv": [
+                    "app",
+                    "start"
+                ]
+            },
+            {
+                "appName": "SOW TRS",
+                "procName": "node",
+                "cwd": "D:\\project\\sow-trs",
+                "argv": [
+                    "app",
+                    "start"
+                ]
+            }
+        ],
+        "linux": [
+            {
+                "appName": "SOW ERP",
+                "procName": "node",
+                "cwd": "/home/sow/sow-erp",
+                "argv": [
+                    "app",
+                    "start"
+                ]
+            },
+            {
+                "appName": "SOW TRS",
+                "procName": "node",
+                "cwd": "/home/sow/sow-trs",
+                "argv": [
+                    "app",
+                    "start"
+                ]
+            }
+        ]
+    }
+}
