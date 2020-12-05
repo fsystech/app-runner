@@ -117,13 +117,13 @@ async function startApp(pPath = "config.json") {
         }
     }
     console.log(`Task ended.`);
-    /*const ms = (((1000 * 60) * 60) * 12);
+    const ms = (((1000 * 60) * 60) * 12);
     //const ms = (((1000 * 15)));
     //console.log(`Going coma for ${ms} ms.`);
     console.log(`Going coma for ${ms} ms.`);
-    do {
-        await sleep(ms);
-    } while (true);*/
-    //console.log(`Exiting from coma.`);
+    setInterval(() => {
+        console.log(`Hello I'm alive now....`);
+        console.log(`Going coma for ${ms} ms.`);
+    }, ms);
 }
 startApp();
