@@ -2,10 +2,10 @@
   "name": "app-runner",
   "version": "1.0.0",
   "description": "Any type app runner",
-  "main": "app-runner.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app-runner"
+    "start": "node app"
   },
   "repository": {
     "type": "git",
