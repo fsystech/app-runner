@@ -15,6 +15,7 @@
 const { exec } = require('child_process');
 const fs = require('fs').promises;
 const fs_stat = require('fs').stat;
+const sleep = require('util').promisify(setTimeout);
 const _platform = require('os').platform();
 const isWin = /win/gi.test(_platform);
 /**
@@ -101,12 +102,6 @@ async function startApp(pPath = "config.json") {
             } else {
                 console.log(`${status.data}\r\nSuccessfully run ${appConfig.appName}`);
             }
-            /*const childProcess = spawn(appConfig.procName, appConfig.argv, {
-                detached: true,
-                stdio: 'ignore',
-                cwd: appConfig.cwd
-            });
-            childProcess.unref();*/
         }
     } else {
         if (!Array.isArray(config.apps.linux))
@@ -119,13 +114,12 @@ async function startApp(pPath = "config.json") {
             } else {
                 console.log(`${status.data}\r\nSuccessfully run ${appConfig.appName}`);
             }
-            /*const childProcess = spawn(appConfig.procName, appConfig.argv, {
-                detached: true,
-                stdio: 'ignore',
-                cwd: appConfig.cwd
-            });
-            childProcess.unref();*/
         }
     }
+    console.log("Going coma...");
+    const hour = (((1000 * 60) * 60) * 12);
+    do {
+        await sleep(hour);
+    } while (true);
 }
 startApp();
