@@ -9,9 +9,10 @@
 // 5:31 PM 12/5/2020
 /**
  * @typedef {{appName:string;cwd:string;procName:string; argv:string[]}} IAppConfig
- * @typedef {{author:string;apps:{win:IAppConfig[]; linux:IAppConfig[]}}} IConfig 
+ * @typedef {{author:string;apps:{win:IAppConfig[]; linux:IAppConfig[]}}} IConfig
+ * @typedef {{code:number,data:string, err:string, isError:boolean}} IChildProcStatus
  */
-const { spawn } = require('child_process');
+const { exec } = require('child_process');
 const fs = require('fs').promises;
 const fs_stat = require('fs').stat;
 const _platform = require('os').platform();
@@ -49,7 +50,31 @@ function readJsonSync(absPath) {
         return resolve(data);
     });
 }
-
+/**
+ * Open Child Process
+ * @param {IAppConfig} appConfig
+ * @returns {Promise<IChildProcStatus>}
+ */
+function openProc(appConfig) {
+    return new Promise((resolve, reject) => {
+        const proc = exec(appConfig.procName + " " + appConfig.argv.join(" "), { cwd: appConfig.cwd });
+        let msg = ""; let err = "";
+        proc.stdout.on('data', function (data) {
+            msg += (data.toString());
+        });
+        proc.stderr.on('data', function (data) {
+            err += (data.toString());
+        });
+        proc.on('exit', function (icode) {
+            resolve({
+                code: icode,
+                data: msg, err,
+                isError: err.length > 0
+            });
+            msg = err = undefined;
+        });
+    })
+}
 /**
  * Starting application
  * @param {string|undefined} pPath
@@ -68,27 +93,39 @@ async function startApp(pPath = "config.json") {
     if (isWin) {
         if (!Array.isArray(config.apps.win))
             throw new Error(`No configuration found for ${_platform}`);
-        config.apps.win.forEach((appConfig) => {
+        for (let appConfig of config.apps.win) {
             console.log(`Starting ${appConfig.appName}`);
-            const childProcess = spawn(appConfig.procName, appConfig.argv, {
+            const status = await openProc(appConfig);
+            if (status.isError === true) {
+                console.log(`Error occured in ${appConfig.appName}\r\n${status.err}`);
+            } else {
+                console.log(`${status.data}\r\nSuccessfully run ${appConfig.appName}`);
+            }
+            /*const childProcess = spawn(appConfig.procName, appConfig.argv, {
                 detached: true,
                 stdio: 'ignore',
                 cwd: appConfig.cwd
             });
-            childProcess.unref();
-        });
+            childProcess.unref();*/
+        }
     } else {
         if (!Array.isArray(config.apps.linux))
             throw new Error(`No configuration found for ${_platform}`);
-        config.apps.linux.forEach((appConfig) => {
+        for (let appConfig of config.apps.linux) {
             console.log(`Starting ${appConfig.appName}`);
-            const childProcess = spawn(appConfig.procName, appConfig.argv, {
+            const status = await openProc(appConfig);
+            if (status.isError === true) {
+                console.log(`Error occured in ${appConfig.appName}\r\n${status.err}`);
+            } else {
+                console.log(`${status.data}\r\nSuccessfully run ${appConfig.appName}`);
+            }
+            /*const childProcess = spawn(appConfig.procName, appConfig.argv, {
                 detached: true,
                 stdio: 'ignore',
                 cwd: appConfig.cwd
             });
-            childProcess.unref();
-        });
+            childProcess.unref();*/
+        }
     }
 }
 startApp();
