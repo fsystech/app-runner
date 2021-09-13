@@ -13,9 +13,11 @@
  * @typedef {{code:number,data:string, err:string, isError:boolean}} IChildProcStatus
  */
 const { exec } = require('child_process');
-const fs = require('fs').promises;
-const fs_stat = require('fs').stat;
-const sleep = require('util').promisify(setTimeout);
+const fs = require('fs');
+const { promisify } = require('util');
+const fs_stat = fs.stat;
+const _readFile = promisify(fs.readFile)
+//const sleep = require('util').promisify(setTimeout);
 const _platform = require('os').platform();
 const isWin = /win/gi.test(_platform);
 /**
@@ -43,7 +45,7 @@ function readJsonSync(absPath) {
     return new Promise(async (resolve, reject) => {
         let data;
         try {
-            const buff = await fs.readFile(absPath);
+            const buff = await _readFile(absPath);
             data = JSON.parse(buff.toString().replace(/^\uFEFF/, '').replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, "").replace(/^\s*$(?:\r\n?|\n)/gm, ""));
         } catch (e) {
             return reject(e);
